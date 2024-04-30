@@ -2,20 +2,19 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
 import time
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # Uncomment this line to run the browser in headless mode
-chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-gpu")
 # Set up the WebDriver
 driver = webdriver.Chrome(options=chrome_options)
+
+# Add your Codeforces username and password
+username = ""
+password = ""
 
 
 def get_submission_id(url, driver):
@@ -38,13 +37,9 @@ def extract_num(string):
         return None
 
 
-def getproblems(url):
+def get_problems(url):
     links_with_codes = []
 
-    # URL of the page
-    # url =" https://codeforces.com/problemset/page/5?tags=800-800&order=BY_RATING_ASC"
-
-    # Send a GET request to the URL
     response = requests.get(url)
 
     # Parse the HTML content
@@ -87,10 +82,8 @@ def get_accepted_submission(url, cd):
         return f"An error occurred: {e}"
 
 
-# Example usage:  cnt=17
-
-# You might need to specify the path to your webdriver executable
 def delay(x):
+    # Use this delay according to your needs
     time.sleep(x)
 
 
@@ -123,8 +116,6 @@ def codeforces_login(driver, username, password):
 
 
 def submit_codeforces_solution(driver, language_value, problem_code, source_code):
-    # Load the login page
-
     # Load the submission page
     driver.get("https://codeforces.com/problemset/submit")
     delay(1)
@@ -151,37 +142,32 @@ def submit_codeforces_solution(driver, language_value, problem_code, source_code
     time.sleep(0.5)
 
 
-codeforces_login(driver, "Traverser_Steal69", "yutabot123")
+# Login to Codeforces
+codeforces_login(driver, username, password)
 
-for i in range(52,56):
-    with open("logger.txt","a") as f:
-        f.write("page : - "+str(i)+"\n")
-    url = f"https://codeforces.com/problemset/page/{i}?order=BY_RATING_ASC"
-    cnt = 0  # cur solved 366
-    problem_links_with_codes = getproblems(url)
+# Loop through problem pages
+for i in range(1, 93):  # Adjust page range, typically it submits 150 problems in 30 min in good network speed
+    with open("logger.txt", "a") as f:
+        f.write("page : - " + str(i) + "\n")
+    url = f"https://codeforces.com/problemset/page/{i}?order=BY_RATING_ASC"  # URL for rating-wise problem page
+    cnt = 0  # Current solved 366
+    problem_links_with_codes = get_problems(url)
     start_time = time.time()
     for link, problem_code in problem_links_with_codes:
-        if (cnt >0):
+        if cnt > 0:
             pass
 
-        if (cnt >=0):
+        if cnt >= 0:
             submission = get_accepted_submission(link, problem_code)
             try:
-                # login_and_submit("I_steal69", "yutabot123", problem_code, submission["language"], submission["source_code"])
                 submit_codeforces_solution(driver, "50", problem_code, submission["source_code"])
-
                 print("Submission successful!")
-                # time.sleep(0.5)
             except Exception as e:
                 print(f"An error occurred: {e}")
         cnt += 1
         print(cnt)
     end_time = time.time()
     execution_time = end_time - start_time
-    print("Execution time:", execution_time, "seconds")
+    print("Execution time:", execution_time, "seconds")  # Optional logging, you can remove this
     with open("logger.txt", "a") as f:
-        f.write("took : "+str(execution_time)+" seconds\n")
-
-#time at 76 18:43
-#apply on page 5  after 35 problems ,same with pag 7  ,same with  8 ,full page 11,full page  15  ,half page 16 ,page 27 start from 60,full empty 28
-#
+        f.write("took : " + str(execution_time) + " seconds\n")
