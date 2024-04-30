@@ -1,6 +1,4 @@
-# Yuta-v1--Automated-Problem-Submission-Bot-for-Codeforces
-
-# Yuta v1: Automated Problem Submission Bot for Codforces
+# Yuta-v1--Automated-Problem-Submission-Bot-for-Codeforces / steal submission 
 
 ## Introduction
 You may have seen accounts that claim to have solved over 8000 problems in 10 days, or 9000 problems in weeks. Obviously, these are bots. Ever wonder how they are built? So, I built one using Selenium.
